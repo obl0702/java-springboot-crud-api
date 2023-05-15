@@ -2,6 +2,7 @@ package com.ongbl.productrestapi.controllers;
 
 import com.ongbl.productrestapi.entity.Item;
 import com.ongbl.productrestapi.repositories.ItemRepository;
+import com.ongbl.productrestapi.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,22 +11,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin("http://127.0.0.1:5173/")
 public class ItemController {
 
-    private final ItemRepository itemRepository;
-
     @Autowired
-    public ItemController(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
-    }
+    ProductService productService;
 
     @PostMapping("/updateItems")
-    public void updateItems(@RequestBody List<Item> items) {
-        List<Long> ids = items.stream()
-                .map(Item::getId)
-                .collect(Collectors.toList());
-
-        String status = "Annulled";
-        itemRepository.updateItemsByIdIn(status, ids);
+    public void updateItems(@RequestBody List<Long> id) {
+        System.out.println(id);
+        productService.updateItems(id);
     }
 }

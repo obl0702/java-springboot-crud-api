@@ -3,11 +3,15 @@ package com.ongbl.productrestapi.services;
 import com.ongbl.productrestapi.entity.Product;
 import com.ongbl.productrestapi.mapper.ProductMapper;
 import com.ongbl.productrestapi.model.ProductDTO;
+import com.ongbl.productrestapi.repositories.ItemRepository;
 import com.ongbl.productrestapi.repositories.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,11 +20,13 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final ItemRepository itemRepository;
 
 
-    public ProductServiceImpl(ProductMapper productMapper, ProductRepository productRepository) {
+    public ProductServiceImpl(ProductMapper productMapper, ProductRepository productRepository, ItemRepository itemRepository) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
+        this.itemRepository = itemRepository;
     }
 
     public List<ProductDTO> getAllProducts(Integer pageNo, Integer pageSize, String sortBy){
@@ -110,6 +116,12 @@ public class ProductServiceImpl implements ProductService{
             productRepository.delete(product);
             return product;
         }).orElseThrow(RuntimeException::new);
+    }
+
+    @Transactional
+    public void updateItems(List<Long> id){
+        String status = "Annulled";
+        itemRepository.updateItemsByIdIn(status, id);
     }
 
 }
